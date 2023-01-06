@@ -1,4 +1,4 @@
-package ikg.queryGenerator;
+package ikg.QueryFaker;
 
 import com.github.javafaker.Faker;
 
