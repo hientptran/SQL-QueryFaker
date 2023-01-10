@@ -2,6 +2,9 @@ package ikg.QueryFaker;
 
 import com.github.javafaker.Faker;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.Format;
 import java.text.ParseException;
 import java.util.*;
@@ -11,8 +14,8 @@ import java.util.regex.Pattern;
 
 
 public class Main {
-    public static void main(String[] args) throws ParseException {
-        printQueries();
+    public static void main(String[] args) {
+        writeToFile();
     }
     //-----------------------------------------------------------------
     static Faker faker = new Faker(Locale.GERMANY);
@@ -60,18 +63,18 @@ public class Main {
 
     //-----------------------------------------------------------------
     public static String createQueryFormat(String[] data) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         if (data.length > 1) {
-            result += String.format("('%s', ", data[0]);
+            result.append(String.format("('%s', ", data[0]));
             for (int i = 1; i < data.length - 1; i++) {
-                result += String.format("'%s', ", data[i]);
+                result.append(String.format("'%s', ", data[i]));
             }
-            result += String.format("'%s')", data[data.length - 1]);
+            result.append(String.format("'%s')", data[data.length - 1]));
         }
         else if (data.length == 1) {
-            result += String.format("'%s')", data[0]);
+            result.append(String.format("'%s')", data[0]));
         }
-        return result;
+        return result.toString();
     }
     public static String[] typeInput() {
         System.out.println("""
@@ -209,5 +212,43 @@ public class Main {
         }
         String line = "\t" + queries[queries.length - 1] + ";\n";
         System.out.print(line);
+    }
+    public static void createFile(String filename) {
+        try {
+            File myObj = new File(filename + ".txt");
+            if (myObj.createNewFile()) {
+                System.out.println("File created: " + myObj.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+    public static void writeToFile() {
+        String filename = readString("What is the name of your file?",".+");
+        try {
+            createFile(filename);
+            FileWriter myWriter = new FileWriter(filename + ".txt");
+
+            String tableName = readString("What is the name of your table?", ".+");
+            String[] queries = createQueries();
+            String header = String.format("INSERT INTO %s VALUES\n", tableName);
+            myWriter.write(header);
+            for (int i = 0; i < queries.length - 1; i++) {
+                String line = "\t" + queries[i] + ",\n";
+                myWriter.write(line);
+            }
+            String line = "\t" + queries[queries.length - 1] + ";\n";
+            myWriter.write(line);
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
