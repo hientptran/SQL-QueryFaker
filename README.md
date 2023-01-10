@@ -1,6 +1,6 @@
 # SQL-QueryFaker
 
-Simple command line program to generate fake data for SQL insert queries using the JavaFaker library. Created for my Database course because I'm sick of manually creating excel tables.
+Simple command line program to generate fake data for SQL insert queries using the [JavaFaker](https://github.com/DiUS/java-faker) library. Created for my Database course because I'm sick of manually creating excel tables.
 
 Current supported features include:
 - Generate SQL (PostgresSQL) queries with fake data
